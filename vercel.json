@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/game.html" },
+    { "source": "/play", "destination": "/game.html" }
+  ],
+  "headers": [
+    {
+      "source": "/game.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+      ]
+    }
+  ]
+}

@@ -1,20 +1,21 @@
-import { useEffect, useRef } from 'react'
+// Redirect straight to the game
+import { useEffect } from 'react'
 
-// The full game lives in public/game.html loaded into an iframe.
-// This gives us full canvas control with no React interference.
 export default function App() {
+  useEffect(() => {
+    // Just redirect to game.html directly
+    window.location.href = '/game.html'
+  }, [])
+
   return (
-    <iframe
-      src="/game.html"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        border: 'none',
-        display: 'block',
-      }}
-      title="Venom Rush"
-    />
+    <div style={{
+      position: 'fixed', inset: 0,
+      background: '#050810',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: 'monospace', color: '#39ff14', fontSize: '1rem',
+      letterSpacing: '0.3em'
+    }}>
+      LOADING...
+    </div>
   )
 }
