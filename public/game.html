@@ -973,21 +973,15 @@ function trackAllMissions(stat, val) {
 }
 
 // ── PATCH existing mTrack to also update calendar missions ───
-const _origMTrack = mTrack;
+
 function mTrack(stat, v) {
   _origMTrack(stat, v);
   trackAllMissions(stat, v);
 }
 
 // ── PATCH showDeath to show personal best ────────────────────
-const _origShowDeath = showDeath;
-function showDeath(killer, extra) {
-  _origShowDeath(killer, extra);
-  checkPersonalBest(ps?.score || 0, pKills);
-}
 
-// ── PATCH startGame to activate spawn shield ─────────────────
-const _origStartGame2 = startGame;
+
 </script>
 </body>
 </html>
