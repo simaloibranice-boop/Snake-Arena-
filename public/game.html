@@ -227,6 +227,111 @@ body{font-family:var(--ff);color:var(--text);}
 @media(pointer:coarse){#dpad{display:flex;}}
 #cursor{position:fixed;pointer-events:none;z-index:9999;width:16px;height:16px;border:2px solid rgba(57,255,20,.7);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px rgba(57,255,20,.3);transition:width .1s,height .1s,border-color .1s;}
 #cursor.boost{width:10px;height:10px;border-color:var(--y);box-shadow:0 0 14px rgba(255,214,0,.6);}
+/* ── PAUSE SCREEN ─────────────────────────────── */
+#pauseScreen{
+  position:absolute;inset:0;z-index:80;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+  background:rgba(5,8,16,.88);backdrop-filter:blur(12px);
+}
+#pauseScreen.on{display:flex;}
+.pause-title{
+  font-family:'Bebas Neue',cursive;font-size:clamp(3rem,9vw,6rem);
+  color:#39ff14;letter-spacing:.1em;
+  text-shadow:0 0 40px rgba(57,255,20,.6);
+  animation:pausePulse 2s ease-in-out infinite;
+}
+@keyframes pausePulse{0%,100%{opacity:1}50%{opacity:.6}}
+.pause-sub{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:rgba(0,212,255,.5);letter-spacing:.2em;}
+.pause-btns{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
+.btn-resume{
+  background:#39ff14;border:none;color:#050810;
+  font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:.2em;
+  padding:13px 38px;cursor:pointer;transition:.15s;
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+}
+.btn-resume:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(57,255,20,.5);}
+.pause-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px 22px;
+  text-align:center;font-family:'Share Tech Mono',monospace;
+}
+.ps-v{font-family:'Bebas Neue',cursive;font-size:1.6rem;color:#39ff14;}
+.ps-l{font-size:.58rem;color:rgba(0,212,255,.4);letter-spacing:.15em;text-transform:uppercase;margin-top:2px;}
+
+/* ── SPAWN SHIELD ─────────────────────────────── */
+#spawnShield{
+  position:absolute;top:56px;left:50%;transform:translateX(-50%);
+  z-index:25;pointer-events:none;display:none;
+  background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.35);
+  padding:5px 18px;font-family:'Share Tech Mono',monospace;font-size:.65rem;
+  color:rgba(0,212,255,.8);letter-spacing:.15em;text-align:center;
+}
+#spawnShield.on{display:block;}
+.shield-bar{height:3px;background:rgba(255,255,255,.1);margin-top:4px;overflow:hidden;}
+.shield-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#39ff14);transition:width .1s linear;}
+
+/* ── DANGER WARNING ───────────────────────────── */
+#dangerOverlay{
+  position:absolute;inset:0;pointer-events:none;z-index:7;
+  border:4px solid transparent;transition:border-color .1s;
+}
+#dangerOverlay.on{
+  border-color:rgba(255,23,68,.7);
+  box-shadow:inset 0 0 60px rgba(255,23,68,.25);
+  animation:dangerPulse .4s ease-in-out infinite;
+}
+@keyframes dangerPulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── EMOTES ───────────────────────────────────── */
+#emoteBar{
+  position:absolute;bottom:56px;right:12px;z-index:25;
+  display:flex;flex-direction:column;gap:4px;pointer-events:none;
+}
+.emote-pop{
+  background:rgba(5,8,16,.9);border:1px solid rgba(57,255,20,.25);
+  padding:4px 10px;font-size:.85rem;text-align:center;
+  animation:emoteIn .3s ease,emoteOut .3s ease 1.8s forwards;
+  align-self:flex-end;
+}
+@keyframes emoteIn{from{opacity:0;transform:scale(.5) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes emoteOut{to{opacity:0;transform:translateY(-8px)}}
+
+/* ── MISSIONS CALENDAR ────────────────────────── */
+.mission-tabs{display:flex;gap:0;border-bottom:1px solid rgba(57,255,20,.12);margin-bottom:14px;flex-wrap:wrap;}
+.mtab{
+  font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.2em;
+  padding:8px 16px;background:none;border:none;border-bottom:2px solid transparent;
+  margin-bottom:-1px;color:rgba(0,212,255,.3);cursor:pointer;transition:.2s;
+}
+.mtab:hover{color:rgba(0,212,255,.65);}
+.mtab.on{color:#39ff14;border-color:#39ff14;}
+.mpanel{display:none;}.mpanel.on{display:block;}
+.mission-item{
+  background:#0c1428;border:1px solid rgba(57,255,20,.1);
+  padding:12px 14px;margin-bottom:8px;position:relative;overflow:hidden;
+}
+.mission-item.done{border-color:rgba(57,255,20,.3);background:rgba(57,255,20,.04);}
+.mission-item.done::after{
+  content:'✓ COMPLETE';position:absolute;top:8px;right:10px;
+  font-family:'Share Tech Mono',monospace;font-size:.55rem;color:#39ff14;letter-spacing:.1em;
+}
+.mission-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.mission-title{font-weight:700;font-size:.75rem;color:#e0f0ff;}
+.mission-reward{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#ffd600;}
+.mission-desc{font-size:.62rem;color:rgba(0,212,255,.4);margin-bottom:7px;line-height:1.5;}
+.mission-bar{height:4px;background:rgba(255,255,255,.06);overflow:hidden;border-radius:2px;}
+.mission-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#39ff14);border-radius:2px;transition:width .5s;}
+.mission-prog{font-family:'Share Tech Mono',monospace;font-size:.56rem;color:rgba(0,212,255,.32);margin-top:4px;}
+.mission-timer{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:rgba(255,214,0,.5);margin-bottom:10px;}
+
+/* ── PERSONAL BEST ────────────────────────────── */
+.pb-row{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'Share Tech Mono',monospace;font-size:.7rem;
+  color:rgba(255,214,0,.6);margin-top:4px;
+}
+.pb-new{color:#39ff14;animation:pbFlash .6s ease infinite;}
+@keyframes pbFlash{0%,100%{opacity:1}50%{opacity:.3}}
+
 /* Tutorial */
 #tutOverlay{position:fixed;inset:0;z-index:999;background:rgba(5,8,16,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
 #tutOverlay.off{display:none!important;}
@@ -348,9 +453,17 @@ body{font-family:var(--ff);color:var(--text);}
     </div>
   </div>
   <div class="tab-panel" id="tab-missions">
-    <div class="wallet" style="margin-bottom:6px">🔥 <span id="streakDisp">1</span>-day streak</div>
-    <div style="font-family:var(--fm);font-size:.62rem;color:rgba(0,212,255,.3);margin-bottom:16px">Resets in <span id="missionTimer" style="color:var(--g)">--:--</span></div>
-    <div id="missionList"></div>
+    <div class="wallet" style="margin-bottom:6px">🔥 <span id="streakDisp">1</span>-day streak &nbsp;·&nbsp; <span style="font-size:.65rem;color:rgba(57,255,20,.4)">🪙 <span id="totalMCoins">0</span> available</span></div>
+    <div class="mission-tabs">
+      <button class="mtab on" data-mp="daily" onclick="switchMP(this)">📅 DAILY</button>
+      <button class="mtab" data-mp="weekly" onclick="switchMP(this)">📆 WEEKLY</button>
+      <button class="mtab" data-mp="monthly" onclick="switchMP(this)">🗓️ MONTHLY</button>
+      <button class="mtab" data-mp="yearly" onclick="switchMP(this)">🏆 YEARLY</button>
+    </div>
+    <div id="mp-daily" class="mpanel on"></div>
+    <div id="mp-weekly" class="mpanel"></div>
+    <div id="mp-monthly" class="mpanel"></div>
+    <div id="mp-yearly" class="mpanel"></div>
   </div>
   <div class="tab-panel" id="tab-stats"><div class="stat-grid" id="statGrid"></div><div class="field-label" style="margin-bottom:12px">Achievements</div><div id="achList"></div></div>
 </div>
@@ -377,6 +490,33 @@ body{font-family:var(--ff);color:var(--text);}
     <button id="mpToggle" onclick="toggleMultiplayer()">🌐 GO MULTIPLAYER</button>
 
     <canvas id="gc"></canvas>
+
+    <!-- Pause Screen -->
+    <div id="pauseScreen">
+      <div class="pause-title">PAUSED</div>
+      <div class="pause-sub">PRESS P OR ESC TO RESUME</div>
+      <div class="pause-stats" id="pauseStats"></div>
+      <div class="pause-btns">
+        <button class="btn-resume" onclick="resumeGame()">▶ RESUME</button>
+        <button style="background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.15em;padding:13px 22px;cursor:pointer;" onclick="goMenu()">← MENU</button>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.2);margin-top:8px;letter-spacing:.1em;">
+        EMOTES: <span style="color:rgba(57,255,20,.4)">1</span> 😈 &nbsp;
+        <span style="color:rgba(57,255,20,.4)">2</span> 🔥 &nbsp;
+        <span style="color:rgba(57,255,20,.4)">3</span> 💀 &nbsp;
+        <span style="color:rgba(57,255,20,.4)">4</span> 👑
+      </div>
+    </div>
+    <!-- Spawn Shield -->
+    <div id="spawnShield" class="on">
+      🛡️ SPAWN SHIELD — <span id="shieldCountdown">10</span>s
+      <div class="shield-bar"><div class="shield-fill" id="shieldFill" style="width:100%"></div></div>
+    </div>
+    <!-- Danger Warning -->
+    <div id="dangerOverlay"></div>
+    <!-- Emote Bar -->
+    <div id="emoteBar"></div>
+
     <div id="speedOverlay"></div>
     <canvas id="mmapCanvas" width="110" height="110"></canvas>
     <div id="kfeed"></div>
@@ -395,6 +535,7 @@ body{font-family:var(--ff);color:var(--text);}
         <div><div class="ds-v" id="dsLn">1</div><div class="ds-l">Length</div></div>
       </div>
       <div class="death-killer" id="deathKiller"></div>
+      <div class="pb-row" id="pbRow"></div>
       <div class="death-earned" id="deathEarned"></div>
       <div class="death-buttons">
         <button class="btn-respawn" id="respawnBtn">⟳ RESPAWN</button>
@@ -573,6 +714,328 @@ if (!localStorage.getItem('vr_seen')) {
   setTimeout(showTut, 800);
   localStorage.setItem('vr_seen','1');
 }
+
+
+// ═══════════════════════════════════════════════════════════
+//  NEW FEATURES
+// ═══════════════════════════════════════════════════════════
+
+// ── PAUSE SYSTEM ─────────────────────────────────────────
+let paused = false;
+
+function pauseGame() {
+  if (!running || gameOver || !ps?.alive) return;
+  paused = true; running = false;
+  document.getElementById('pauseScreen').classList.add('on');
+  // Show current stats in pause screen
+  document.getElementById('pauseStats').innerHTML = `
+    <div><div class="ps-v">${ps?.score||0}</div><div class="ps-l">Score</div></div>
+    <div><div class="ps-v">${pKills}</div><div class="ps-l">Kills</div></div>
+    <div><div class="ps-v">${Math.floor(sTime)}s</div><div class="ps-l">Time</div></div>
+  `;
+}
+
+function resumeGame() {
+  paused = false; running = true;
+  document.getElementById('pauseScreen').classList.remove('on');
+  lastTS = performance.now(); // reset timestamp to avoid time jump
+}
+
+// ── SPAWN SHIELD ─────────────────────────────────────────
+let spawnShieldTime = 10; // seconds
+let spawnShieldActive = false;
+let spawnShieldInterval = null;
+
+function activateSpawnShield() {
+  spawnShieldTime = 10;
+  spawnShieldActive = true;
+  if (ps) ps.shield = true;
+  document.getElementById('spawnShield').classList.add('on');
+  document.getElementById('shieldCountdown').textContent = spawnShieldTime;
+  document.getElementById('shieldFill').style.width = '100%';
+  clearInterval(spawnShieldInterval);
+  spawnShieldInterval = setInterval(() => {
+    spawnShieldTime -= 0.1;
+    const pct = Math.max(0, (spawnShieldTime / 10) * 100);
+    document.getElementById('shieldFill').style.width = pct + '%';
+    document.getElementById('shieldCountdown').textContent = Math.ceil(spawnShieldTime);
+    if (spawnShieldTime <= 0) {
+      clearInterval(spawnShieldInterval);
+      spawnShieldActive = false;
+      if (ps) ps.shield = false;
+      document.getElementById('spawnShield').classList.remove('on');
+    }
+  }, 100);
+}
+
+// ── DANGER WARNING ────────────────────────────────────────
+let dangerActive = false;
+function checkDanger() {
+  if (!ps?.alive || !ps.segs.length) return;
+  const h = ps.segs[0];
+  let danger = false;
+  for (const s of snakes) {
+    if (!s.alive || s === ps || s.isPlayer) continue;
+    const sh = s.segs[0];
+    const dx = sh.x - h.x, dy = sh.y - h.y;
+    if (dx * dx + dy * dy < (SEG * 8) ** 2) { danger = true; break; }
+  }
+  if (danger !== dangerActive) {
+    dangerActive = danger;
+    document.getElementById('dangerOverlay').classList.toggle('on', danger);
+  }
+}
+
+// ── EMOTES ────────────────────────────────────────────────
+const EMOTES = { '1':'😈', '2':'🔥', '3':'💀', '4':'👑' };
+function showEmote(emoji) {
+  const bar = document.getElementById('emoteBar');
+  const el = document.createElement('div');
+  el.className = 'emote-pop';
+  el.innerHTML = `<span style="font-size:1.4rem">${emoji}</span>`;
+  bar.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+  // Also show above player snake on canvas (handled in render)
+  if (ps?.alive) {
+    ps._emote = emoji;
+    ps._emoteT = 2000;
+  }
+}
+
+// ── PERSONAL BEST ─────────────────────────────────────────
+function checkPersonalBest(score, kills) {
+  const pbScore = parseInt(localStorage.getItem('vr_pb_score') || '0');
+  const pbKills = parseInt(localStorage.getItem('vr_pb_kills') || '0');
+  const newPBScore = score > pbScore;
+  const newPBKills = kills > pbKills;
+  if (newPBScore) localStorage.setItem('vr_pb_score', score);
+  if (newPBKills) localStorage.setItem('vr_pb_kills', kills);
+  const pbRow = document.getElementById('pbRow');
+  if (!pbRow) return;
+  if (newPBScore) {
+    pbRow.innerHTML = '<span class="pb-new">🏆 NEW PERSONAL BEST SCORE!</span>';
+  } else if (pbScore > 0) {
+    pbRow.innerHTML = `<span>Personal Best: ${pbScore} pts · ${pbKills} kills</span>`;
+  }
+}
+
+// ── MISSIONS CALENDAR ─────────────────────────────────────
+const MISSION_SETS = {
+  daily: [
+    {n:'Food Rush',       desc:'Eat 80 food today',           stat:'food',  tgt:80,  rew:60,  ico:'🍎'},
+    {n:'Snake Slayer',    desc:'Kill 5 snakes today',         stat:'kills', tgt:5,   rew:100, ico:'☠️'},
+    {n:'Score Hunter',   desc:'Score 500 points today',       stat:'score', tgt:500, rew:80,  ico:'💯'},
+    {n:'Power Up',       desc:'Collect 3 power-ups today',    stat:'pu',    tgt:3,   rew:50,  ico:'⚡'},
+    {n:'Survivor',       desc:'Survive 3 minutes in one run', stat:'time',  tgt:180, rew:90,  ico:'⏱️'},
+    {n:'Combo King',     desc:'Get a 3x kill combo',          stat:'combo', tgt:3,   rew:120, ico:'🔥'},
+    {n:'Explorer',       desc:'Use a wormhole today',         stat:'wormholes',tgt:1,rew:70,  ico:'🌀'},
+    {n:'Evolved',        desc:'Get an evolution trait today', stat:'evolve',tgt:1,   rew:150, ico:'🧬'},
+  ],
+  weekly: [
+    {n:'Weekly Warrior',  desc:'Kill 30 snakes this week',    stat:'kills', tgt:30,  rew:400, ico:'⚔️'},
+    {n:'Big Appetite',    desc:'Eat 500 food this week',       stat:'food',  tgt:500, rew:300, ico:'🍎'},
+    {n:'High Scorer',     desc:'Score 3000 points this week',  stat:'score', tgt:3000,rew:500, ico:'💯'},
+    {n:'Mode Explorer',   desc:'Play all 6 game modes',        stat:'modes', tgt:6,   rew:350, ico:'🎮'},
+    {n:'Level Grinder',   desc:'Reach level 5 this week',      stat:'level', tgt:5,   rew:600, ico:'⬆️'},
+    {n:'Infection Champ', desc:'Win an Infection mode game',   stat:'infwins',tgt:1,  rew:800, ico:'🧬'},
+  ],
+  monthly: [
+    {n:'Monthly Legend',  desc:'Kill 150 snakes this month',   stat:'kills', tgt:150, rew:2000,ico:'💀'},
+    {n:'Reach the Top',   desc:'Reach level 10 this month',    stat:'level', tgt:10,  rew:3000,ico:'🏆'},
+    {n:'Rich Snake',      desc:'Earn 5000 coins this month',   stat:'coins', tgt:5000,rew:2500,ico:'🪙'},
+    {n:'Unstoppable',     desc:'Get a 10x kill combo',         stat:'combo', tgt:10,  rew:3500,ico:'🔥'},
+    {n:'Marathon',        desc:'Play for 60 minutes total',    stat:'time',  tgt:3600,rew:2000,ico:'⏱️'},
+  ],
+  yearly: [
+    {n:'Serpent God',     desc:'Kill 2000 snakes this year',   stat:'kills', tgt:2000, rew:20000,ico:'👑'},
+    {n:'LEGEND',          desc:'Reach Level 20',               stat:'level', tgt:20,   rew:50000,ico:'⚡'},
+    {n:'Billionaire',     desc:'Earn 100,000 coins',           stat:'coins', tgt:100000,rew:30000,ico:'💎'},
+    {n:'Year Survivor',   desc:'Survive 600 minutes total',    stat:'time',  tgt:36000,rew:25000,ico:'🐍'},
+    {n:'Grand Master',    desc:'Win 50 games in any mode',     stat:'wins',  tgt:50,   rew:40000,ico:'🏆'},
+  ],
+};
+
+// Reset timers per period
+function getMissionKey(period) {
+  const now = new Date();
+  if (period === 'daily')   return `vr_m_d_${now.getFullYear()}_${now.getMonth()}_${now.getDate()}`;
+  if (period === 'weekly') {
+    const wk = Math.floor((now - new Date(now.getFullYear(),0,1)) / 604800000);
+    return `vr_m_w_${now.getFullYear()}_${wk}`;
+  }
+  if (period === 'monthly') return `vr_m_mo_${now.getFullYear()}_${now.getMonth()}`;
+  if (period === 'yearly')  return `vr_m_y_${now.getFullYear()}`;
+}
+
+function getMissionProgress(period) {
+  const key = getMissionKey(period);
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+}
+
+function saveMissionProgress(period, prog) {
+  localStorage.setItem(getMissionKey(period), JSON.stringify(prog));
+}
+
+function getTimeLeft(period) {
+  const now = new Date();
+  if (period === 'daily') {
+    const next = new Date(now); next.setDate(next.getDate()+1); next.setHours(0,0,0,0);
+    const ms = next - now;
+    const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
+    return `Resets in ${h}h ${m}m`;
+  }
+  if (period === 'weekly') {
+    const day = now.getDay(), diff = (7 - day) % 7 || 7;
+    return `Resets in ${diff} day${diff>1?'s':''}`;
+  }
+  if (period === 'monthly') {
+    const next = new Date(now.getFullYear(), now.getMonth()+1, 1);
+    const days = Math.ceil((next - now) / 86400000);
+    return `Resets in ${days} days`;
+  }
+  if (period === 'yearly') {
+    const next = new Date(now.getFullYear()+1, 0, 1);
+    const days = Math.ceil((next - now) / 86400000);
+    return `Resets in ${days} days`;
+  }
+}
+
+function renderMissionPeriod(period) {
+  const missions = MISSION_SETS[period];
+  const prog     = getMissionProgress(period);
+  const el       = document.getElementById('mp-' + period);
+  if (!el) return;
+
+  const timeLeft = getTimeLeft(period);
+  let totalAvail = 0;
+  let html = `<div class="mission-timer">⏳ ${timeLeft}</div>`;
+
+  for (const ms of missions) {
+    const cur  = prog[ms.stat] || 0;
+    const done = cur >= ms.tgt;
+    const pct  = Math.min(100, (cur / ms.tgt) * 100);
+    if (!done) totalAvail += ms.rew;
+    html += `
+      <div class="mission-item ${done?'done':''}">
+        <div class="mission-header">
+          <div class="mission-title">${ms.ico} ${ms.n}</div>
+          <div class="mission-reward">${done ? '✓ EARNED' : '🪙 +' + ms.rew.toLocaleString()}</div>
+        </div>
+        <div class="mission-desc">${ms.desc}</div>
+        <div class="mission-bar"><div class="mission-fill" style="width:${pct}%"></div></div>
+        <div class="mission-prog">${Math.min(ms.tgt,cur).toLocaleString()} / ${ms.tgt.toLocaleString()}</div>
+      </div>`;
+  }
+  el.innerHTML = html;
+
+  // Update total available coins display
+  const total = ['daily','weekly','monthly','yearly'].reduce((sum, p) => {
+    const pm = MISSION_SETS[p], pr = getMissionProgress(p);
+    return sum + pm.filter(m => (pr[m.stat]||0) < m.tgt).reduce((s,m) => s+m.rew, 0);
+  }, 0);
+  const tc = document.getElementById('totalMCoins');
+  if (tc) tc.textContent = total.toLocaleString();
+}
+
+function renderAllMissions() {
+  ['daily','weekly','monthly','yearly'].forEach(renderMissionPeriod);
+}
+
+function switchMP(btn) {
+  document.querySelectorAll('.mtab').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.mpanel').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const panel = document.getElementById('mp-' + btn.dataset.mp);
+  if (panel) panel.classList.add('on');
+}
+
+// Track mission progress during game
+function trackMission(period, stat, val) {
+  const prog = getMissionProgress(period);
+  prog[stat] = (prog[stat] || 0) + val;
+  saveMissionProgress(period, prog);
+  // Check for completion + reward
+  const ms = MISSION_SETS[period].find(m => m.stat === stat);
+  if (ms && prog[stat] >= ms.tgt && prog[stat] - val < ms.tgt) {
+    SV.coins += ms.rew;
+    saveData();
+    kfAdd(`<span class="kfme">🏅 MISSION: ${ms.n} +${ms.rew} coins!</span>`, true);
+    SFX.ach();
+  }
+}
+
+// Track ALL periods at once
+function trackAllMissions(stat, val) {
+  ['daily','weekly','monthly','yearly'].forEach(p => trackMission(p, stat, val));
+}
+
+// ── PATCH existing mTrack to also update calendar missions ───
+const _origMTrack = mTrack;
+function mTrack(stat, v) {
+  _origMTrack(stat, v);
+  trackAllMissions(stat, v);
+}
+
+// ── PATCH showDeath to show personal best ────────────────────
+const _origShowDeath = showDeath;
+function showDeath(killer, extra) {
+  _origShowDeath(killer, extra);
+  checkPersonalBest(ps?.score || 0, pKills);
+}
+
+// ── PATCH startGame to activate spawn shield ─────────────────
+const _origStartGame2 = startGame;
+function startGame() {
+  _origStartGame2();
+  setTimeout(activateSpawnShield, 100);
+}
+
+// ── Render emote above player snake ──────────────────────────
+// (injected into render loop via the step function)
+const _origStep = step;
+function step() {
+  _origStep();
+  checkDanger();
+  // Tick emote timer
+  if (ps?._emoteT > 0) ps._emoteT -= TICK;
+}
+
+// ── Key handler additions ─────────────────────────────────────
+const _origKeydown = window.onkeydown;
+document.addEventListener('keydown', e => {
+  // Pause / Resume
+  if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && running) {
+    e.preventDefault(); pauseGame(); return;
+  }
+  if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && paused) {
+    e.preventDefault(); resumeGame(); return;
+  }
+  // Emotes
+  if (ps?.alive && !paused && EMOTES[e.key]) {
+    showEmote(EMOTES[e.key]);
+  }
+});
+
+// ── Render emote above snake head ────────────────────────────
+// Patch into drawSnake — show emote bubble above head
+const _origDrawSnake = drawSnake;
+function drawSnake(s) {
+  _origDrawSnake(s);
+  if (s._emote && s._emoteT > 0) {
+    const h = s.segs[0], baseR = Math.min(SEG*.48, SEG*.3+s.segs.length*.004);
+    ctx.save();
+    ctx.font = '20px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.globalAlpha = Math.min(1, s._emoteT / 500);
+    ctx.fillText(s._emote, h.x, h.y - baseR * 1.25 - 20);
+    ctx.restore();
+  }
+}
+
+// ── Init missions on load ─────────────────────────────────────
+renderAllMissions();
+setInterval(renderAllMissions, 60000);
 
 renderUI();
 document.getElementById('nameInput').focus();
