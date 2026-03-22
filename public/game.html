@@ -988,61 +988,6 @@ function showDeath(killer, extra) {
 
 // ── PATCH startGame to activate spawn shield ─────────────────
 const _origStartGame2 = startGame;
-function startGame() {
-  _origStartGame2();
-  setTimeout(activateSpawnShield, 100);
-}
-
-// ── Render emote above player snake ──────────────────────────
-// (injected into render loop via the step function)
-const _origStep = step;
-function step() {
-  _origStep();
-  checkDanger();
-  // Tick emote timer
-  if (ps?._emoteT > 0) ps._emoteT -= TICK;
-}
-
-// ── Key handler additions ─────────────────────────────────────
-const _origKeydown = window.onkeydown;
-document.addEventListener('keydown', e => {
-  // Pause / Resume
-  if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && running) {
-    e.preventDefault(); pauseGame(); return;
-  }
-  if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && paused) {
-    e.preventDefault(); resumeGame(); return;
-  }
-  // Emotes
-  if (ps?.alive && !paused && EMOTES[e.key]) {
-    showEmote(EMOTES[e.key]);
-  }
-});
-
-// ── Render emote above snake head ────────────────────────────
-// Patch into drawSnake — show emote bubble above head
-const _origDrawSnake = drawSnake;
-function drawSnake(s) {
-  _origDrawSnake(s);
-  if (s._emote && s._emoteT > 0) {
-    const h = s.segs[0], baseR = Math.min(SEG*.48, SEG*.3+s.segs.length*.004);
-    ctx.save();
-    ctx.font = '20px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.globalAlpha = Math.min(1, s._emoteT / 500);
-    ctx.fillText(s._emote, h.x, h.y - baseR * 1.25 - 20);
-    ctx.restore();
-  }
-}
-
-// ── Init missions on load ─────────────────────────────────────
-renderAllMissions();
-setInterval(renderAllMissions, 60000);
-
-renderUI();
-document.getElementById('nameInput').focus();
-setInterval(renderUI,60000);
 </script>
 </body>
 </html>
