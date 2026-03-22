@@ -227,6 +227,23 @@ body{font-family:var(--ff);color:var(--text);}
 @media(pointer:coarse){#dpad{display:flex;}}
 #cursor{position:fixed;pointer-events:none;z-index:9999;width:16px;height:16px;border:2px solid rgba(57,255,20,.7);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px rgba(57,255,20,.3);transition:width .1s,height .1s,border-color .1s;}
 #cursor.boost{width:10px;height:10px;border-color:var(--y);box-shadow:0 0 14px rgba(255,214,0,.6);}
+/* Tutorial */
+#tutOverlay{position:fixed;inset:0;z-index:999;background:rgba(5,8,16,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+#tutOverlay.off{display:none!important;}
+.tut-title{font-family:'Bebas Neue',cursive;font-size:clamp(2rem,6vw,3.5rem);color:#39ff14;letter-spacing:.1em;}
+.tut-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:480px;width:90vw;}
+.tut-card{background:#0c1428;border:1px solid rgba(57,255,20,.2);padding:14px;border-radius:2px;}
+.tut-key{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:#39ff14;margin-bottom:5px;}
+.tut-desc{font-size:.75rem;color:rgba(0,212,255,.6);line-height:1.5;}
+.tut-btn{background:#39ff14;border:none;color:#050810;font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.2em;padding:14px 48px;cursor:pointer;margin-top:8px;transition:.15s;}
+.tut-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(57,255,20,.4);}
+.tut-skip{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.3);cursor:pointer;letter-spacing:.15em;}
+.tut-skip:hover{color:rgba(255,255,255,.6);}
+/* Speed selector */
+.speed-row{display:flex;gap:8px;margin-bottom:16px;}
+.spd-btn{flex:1;background:#0c1428;border:1px solid rgba(57,255,20,.15);color:rgba(57,255,20,.5);font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.1em;padding:8px 4px;cursor:pointer;transition:.2s;text-align:center;}
+.spd-btn.on{background:rgba(57,255,20,.12);border-color:rgba(57,255,20,.5);color:#39ff14;}
+
 /* ── Multiplayer Status ── */
 #mpBar{position:absolute;top:46px;left:0;right:0;height:28px;z-index:25;
   background:rgba(5,8,16,.9);border-bottom:1px solid rgba(57,255,20,.08);
@@ -250,6 +267,28 @@ body{font-family:var(--ff);color:var(--text);}
 <body>
 <div id="cursor"></div>
 <div id="titleScreen">
+
+  <!-- Tutorial Overlay -->
+  <div id="tutOverlay" class="off">
+    <div class="tut-title">HOW TO PLAY</div>
+    <div class="tut-grid">
+      <div class="tut-card"><div class="tut-key">WASD / Arrow Keys</div><div class="tut-desc">Move your snake in any direction</div></div>
+      <div class="tut-card"><div class="tut-key">SPACE / Click</div><div class="tut-desc">Hold to BOOST — burns energy but moves faster</div></div>
+      <div class="tut-card"><div class="tut-key">Q — Dash</div><div class="tut-desc">Triple speed burst for 0.4 seconds</div></div>
+      <div class="tut-card"><div class="tut-key">E — Ghost</div><div class="tut-desc">Pass through other snakes for 3 seconds</div></div>
+      <div class="tut-card"><div class="tut-key">R — Mine</div><div class="tut-desc">Drop an explosive trap at your tail</div></div>
+      <div class="tut-card"><div class="tut-key">F — Venom</div><div class="tut-desc">Spray venom cloud that slows nearby snakes</div></div>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:rgba(0,212,255,.5);text-align:center;max-width:400px;line-height:1.6">
+      🧬 Eat food to grow · Kill snakes to get their score<br>
+      🌀 Purple portals teleport you across the map<br>
+      ☣️ Green glowing food is TOXIC — risky but worth it<br>
+      🔬 Kill infected snakes to EVOLVE special traits
+    </div>
+    <button class="tut-btn" onclick="closeTut()">⚡ LET'S GO!</button>
+    <div class="tut-skip" onclick="closeTut();document.getElementById('tutOverlay').remove()">don't show again</div>
+  </div>
+
   <div class="logo-wrap">
     <div class="logo-pre">[ Multiplayer · Battle Royale · Infection ]</div>
     <div class="logo-main">VENOM<br>RUSH</div>
@@ -266,6 +305,11 @@ body{font-family:var(--ff);color:var(--text);}
   <div class="tab-panel on" id="tab-play">
     <div class="field-label" style="margin-bottom:8px">Your Name</div>
     <input class="name-input" id="nameInput" maxlength="14" placeholder="VIPER_01" autocomplete="off" spellcheck="false">
+    <script>
+      // Restore saved name immediately
+      const _sn = localStorage.getItem('vr_pname');
+      if (_sn) document.getElementById('nameInput').value = _sn;
+    </script>
     <div class="field-label" style="margin-top:20px;margin-bottom:10px">Game Mode</div>
     <div class="mode-grid">
       <div class="mode-card on" data-mode="survival"><span class="mode-tag tag-hot">HOT</span><span class="mode-icon">🐍</span><div class="mode-name">SURVIVAL</div><div class="mode-desc">Eat · Grow · Last snake alive wins</div></div>
@@ -275,7 +319,17 @@ body{font-family:var(--ff);color:var(--text);}
       <div class="mode-card" data-mode="royale"><span class="mode-tag tag-hot">🔥</span><span class="mode-icon">🌀</span><div class="mode-name">BATTLE ROYALE</div><div class="mode-desc">Shrinking zone · Last alive wins</div></div>
       <div class="mode-card" data-mode="teams"><span class="mode-tag tag-new">NEW</span><span class="mode-icon">🤝</span><div class="mode-name">2v2 TEAMS</div><div class="mode-desc">Squad up · Coordinate kills</div></div>
     </div>
+    
+    <div class="field-label" style="margin-top:16px;margin-bottom:8px">Game Speed</div>
+    <div class="speed-row" id="speedRow">
+      <div class="spd-btn" data-spd="slow" onclick="setSpd(this)">🐢 SLOW<br><span style="font-size:.55rem;opacity:.6">Relaxed</span></div>
+      <div class="spd-btn on" data-spd="normal" onclick="setSpd(this)">🐍 NORMAL<br><span style="font-size:.55rem;opacity:.6">Default</span></div>
+      <div class="spd-btn" data-spd="fast" onclick="setSpd(this)">⚡ FAST<br><span style="font-size:.55rem;opacity:.6">Challenge</span></div>
+      <div class="spd-btn" data-spd="extreme" onclick="setSpd(this)">💀 INSANE<br><span style="font-size:.55rem;opacity:.6">No mercy</span></div>
+    </div>
+
     <button class="play-btn" id="playBtn">⚡ ENTER THE ARENA</button>
+    <button style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(57,255,20,.2);color:rgba(57,255,20,.5);font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;padding:10px;cursor:pointer;" onclick="showTut()">❓ HOW TO PLAY</button>
     <div class="ctrl-hint" style="margin-top:18px">
       <span>Move <kbd>WASD/↑↓</kbd></span><span>Boost <kbd>SPACE</kbd></span><span>Dash <kbd>Q</kbd></span>
       <span>Ghost <kbd>E</kbd></span><span>Mine <kbd>R</kbd></span><span>Venom <kbd>F</kbd></span>
@@ -421,7 +475,7 @@ function hesc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function botAI(s){const h=s.segs[0],m=150;if(h.x<m||h.x>W-m||h.y<m||h.y>H-m){const a=Math.atan2(H/2-h.y,W/2-h.x);setDir(s,Math.round(Math.cos(a)),Math.round(Math.sin(a)));s.evTick=10;return;}if(s.evTick>0){s.evTick--;return;}if(MODE==='infection'&&s.infected&&ps?.alive){const ph=ps.segs[0],dx=ph.x-h.x,dy=ph.y-h.y;if(dx*dx+dy*dy<600**2){Math.abs(dx)>Math.abs(dy)?setDir(s,dx>0?1:-1,0):setDir(s,0,dy>0?1:-1);s.boost=s.boostE>15;return;}}if(MODE==='koth'&&Math.random()<.3){const dx=KCX-h.x,dy=KCY-h.y;Math.abs(dx)>Math.abs(dy)?setDir(s,dx>0?1:-1,0):setDir(s,0,dy>0?1:-1);return;}if(MODE==='royale'){const dx=KCX-h.x,dy=KCY-h.y,d=Math.sqrt(dx*dx+dy*dy);if(d>royalR-200){Math.abs(dx)>Math.abs(dy)?setDir(s,dx>0?1:-1,0):setDir(s,0,dy>0?1:-1);return;}}if(s.boss&&ps?.alive){const ph=ps.segs[0],dx=ph.x-h.x,dy=ph.y-h.y;if(dx*dx+dy*dy<700**2){Math.abs(dx)>Math.abs(dy)?setDir(s,dx>0?1:-1,0):setDir(s,0,dy>0?1:-1);s.boost=s.boostE>15;return;}}let bf=null,bd=Infinity;const samp=food.length>100?food.filter((_,i)=>i%5===0):food;for(const f of samp){if(f.toxic&&Math.random()<.7)continue;const dx=f.x-h.x,dy=f.y-h.y,d=dx*dx+dy*dy;if(d<bd){bd=d;bf=f;}}if(bf){const dx=bf.x-h.x,dy=bf.y-h.y;Math.abs(dx)>Math.abs(dy)?setDir(s,dx>0?1:-1,0):setDir(s,0,dy>0?1:-1);}if(Math.random()<.022){s.wAngle+=(Math.random()-.5)*Math.PI;Math.random()<.5?setDir(s,Math.cos(s.wAngle)>0?1:-1,0):setDir(s,0,Math.sin(s.wAngle)>0?1:-1);}s.boost=bd<(SEG*11)**2&&s.boostE>18&&(s.willBoostChase||Math.random()<.3);}
 function useAbility(id){if(!ps?.alive||abCD[id]>0)return;getAC();SFX.ab();const CDS={dash:7000,ghost:14000,trap:18000,venom:11000};abCD[id]=CDS[id];if(id==='dash'){ps.dash=true;dashOn=true;dashT=420;burst(ps.segs[0].x,ps.segs[0].y,'#00d4ff',14);shake(8);}if(id==='ghost'){ps.ghost=true;ghostOn=true;ghostT=3000;}if(id==='trap'){const t=ps.segs[ps.segs.length-1];mines.push({x:t.x,y:t.y,owner:ps,t:12000});burst(t.x,t.y,'#ffab00',10);}if(id==='venom'){venomOn=true;setTimeout(()=>{venomOn=false;},3000);burst(ps.segs[0].x,ps.segs[0].y,'#aaff00',18);}sAbUsed.add(id);mTrack('ab',sAbUsed.size);renderAbilities();}
 function renderAbilities(){const row=document.getElementById('abGrid');row.innerHTML='';const ABS=[{id:'dash',ico:'⚡',key:'Q',c:'#00d4ff'},{id:'ghost',ico:'👻',key:'E',c:'#e040fb'},{id:'trap',ico:'💣',key:'R',c:'#ffab00'},{id:'venom',ico:'💉',key:'F',c:'#aaff00'}];ABS.forEach(ab=>{const cd=abCD[ab.id],rdy=cd<=0;const d=document.createElement('div');d.className='ab-btn '+(rdy?'ready':'');d.style.borderColor=rdy?ab.c:'rgba(255,255,255,.08)';d.innerHTML=`<span class="ab-icon">${ab.ico}</span><span class="ab-key">${ab.key}</span>${!rdy?`<span class="ab-cd">${Math.ceil(cd/1000)}s</span><div class="ab-overlay"></div>`:''}`;d.onclick=()=>useAbility(ab.id);row.appendChild(d);});}
-function step(){sTime+=TICK/1000;sNoHit+=TICK/1000;mTrack('time',TICK/1000);if(MODE==='deathmatch'){modeTimer-=TICK;if(modeTimer<=0){endGame('DM_END');return;}}if(MODE==='koth'&&ps?.alive){const h=ps.segs[0],dx=h.x-KCX,dy=h.y-KCY;if(dx*dx+dy*dy<KR*KR)kothSc+=TICK/1000;if(kothSc>=60){endGame('KOTH_WIN');return;}document.getElementById('kothFill').style.width=(kothSc/60*100)+'%';}if(MODE==='royale'){royalR=Math.max(220,royalR-TICK/1000*55);for(const s of snakes){if(!s.alive)continue;const h=s.segs[0],dx=h.x-KCX,dy=h.y-KCY;if(dx*dx+dy*dy>(royalR-8)**2)killSnake(s,null,'zone');}}if(MODE==='infection'){infectionTimer-=TICK;if(infectionTimer<=0){endGame('INF_LOSE');return;}for(const s of snakes){if(!s.alive||!s.infected)continue;const h=s.segs[0];for(const o of snakes){if(!o.alive||o.infected||o===s)continue;const oh=o.segs[0],dx=oh.x-h.x,dy=oh.y-h.y;if(dx*dx+dy*dy<(SEG*4)**2){o.infectionLoad=(o.infectionLoad||0)+TICK/1000*.3;if(o.infectionLoad>=1){o.infected=true;o.infectionLoad=0;SFX.infect();burst(oh.x,oh.y,'#aaff00',20);}}}}const alive=snakes.filter(s=>s.alive);infectionPct=(alive.filter(s=>s.infected).length/alive.length)*100;document.getElementById('infFill').style.width=infectionPct+'%';if(ps?.alive&&ps.infected&&infectionPct>=100){endGame('INF_WIN');return;}}
+function step(){const _TICK=SPEED_TICKS[GAME_SPEED]||75;sTime+=_TICK/1000;sNoHit+=_TICK/1000;mTrack('time',_TICK/1000);if(MODE==='deathmatch'){modeTimer-=TICK;if(modeTimer<=0){endGame('DM_END');return;}}if(MODE==='koth'&&ps?.alive){const h=ps.segs[0],dx=h.x-KCX,dy=h.y-KCY;if(dx*dx+dy*dy<KR*KR)kothSc+=TICK/1000;if(kothSc>=60){endGame('KOTH_WIN');return;}document.getElementById('kothFill').style.width=(kothSc/60*100)+'%';}if(MODE==='royale'){royalR=Math.max(220,royalR-TICK/1000*55);for(const s of snakes){if(!s.alive)continue;const h=s.segs[0],dx=h.x-KCX,dy=h.y-KCY;if(dx*dx+dy*dy>(royalR-8)**2)killSnake(s,null,'zone');}}if(MODE==='infection'){infectionTimer-=TICK;if(infectionTimer<=0){endGame('INF_LOSE');return;}for(const s of snakes){if(!s.alive||!s.infected)continue;const h=s.segs[0];for(const o of snakes){if(!o.alive||o.infected||o===s)continue;const oh=o.segs[0],dx=oh.x-h.x,dy=oh.y-h.y;if(dx*dx+dy*dy<(SEG*4)**2){o.infectionLoad=(o.infectionLoad||0)+TICK/1000*.3;if(o.infectionLoad>=1){o.infected=true;o.infectionLoad=0;SFX.infect();burst(oh.x,oh.y,'#aaff00',20);}}}}const alive=snakes.filter(s=>s.alive);infectionPct=(alive.filter(s=>s.infected).length/alive.length)*100;document.getElementById('infFill').style.width=infectionPct+'%';if(ps?.alive&&ps.infected&&infectionPct>=100){endGame('INF_WIN');return;}}
 for(const id of Object.keys(abCD))if(abCD[id]>0)abCD[id]=Math.max(0,abCD[id]-TICK);if(ghostOn){ghostT-=TICK;if(ghostT<=0){ghostOn=false;if(ps)ps.ghost=false;}}if(dashOn){dashT-=TICK;if(dashT<=0){dashOn=false;if(ps)ps.dash=false;}}for(const id of Object.keys(puState))if(puState[id]>0)puState[id]=Math.max(0,puState[id]-TICK);if(comboT>0){comboT-=TICK;if(comboT<=0){combo=0;document.getElementById('comboDisp').textContent='';}}for(let i=mines.length-1;i>=0;i--){mines[i].t-=TICK;if(mines[i].t<=0)mines.splice(i,1);}for(let i=venomPuddles.length-1;i>=0;i--){venomPuddles[i].life-=TICK/1000;if(venomPuddles[i].life<=0)venomPuddles.splice(i,1);}for(const s of snakes)if(s.venomFX){s.venomT-=TICK;if(s.venomT<=0)s.venomFX=false;}for(const w of wormholes)w.anim+=TICK*.001;
 if(ps?.alive){if(pendingDir){const d=pendingDir;pendingDir=null;setDir(ps,d.x,d.y);}else{if(keys['ArrowUp']||keys['w']||keys['W'])setDir(ps,0,-1);if(keys['ArrowDown']||keys['s']||keys['S'])setDir(ps,0,1);if(keys['ArrowLeft']||keys['a']||keys['A'])setDir(ps,-1,0);if(keys['ArrowRight']||keys['d']||keys['D'])setDir(ps,1,0);}ps.boost=(boostHeld||keys[' '])&&ps.boostE>0;if(ps.boost)SFX.boost();}
 for(const s of snakes)if(!s.isPlayer&&s.alive)botAI(s);for(const s of snakes)if(s.alive)moveSnake(s);for(const s of snakes)if(s.alive)eatFood(s);if(ps?.alive){collectPU();if(puState.magnet>0)applyMagnet();if(venomOn)applyVenom();}for(const s of snakes)if(s.alive)checkWormholes(s);checkMines();checkCol();shakeMag*=.82;if(shakeMag<.5)shakeMag=0;shakeX=(Math.random()-.5)*shakeMag;shakeY=(Math.random()-.5)*shakeMag;document.getElementById('speedOverlay').classList.toggle('active',ps?.boost&&ps?.boostE>0);checkAch('time',sTime);if(ps?.alive){checkAch('length',ps.segs.length);checkAch('score',pScore);}if(ps?.alive)updateHUD();}
@@ -455,7 +509,7 @@ function drawMinimap(){const mw=mmc.width,mh=mmc.height,sx=mw/W,sy=mh/H;mmx.fill
 function loop(ts){rafId=requestAnimationFrame(loop);const dt=Math.min(ts-lastTS,150);lastTS=ts;if(!running)return;tickAcc+=dt;while(tickAcc>=TICK){tickAcc-=TICK;step();}render();}
 let puSpawnT=0;
 function spawnPU(){if(pups.length>=8)return;const t=PUTS[Math.floor(Math.random()*PUTS.length)];pups.push({x:80+Math.random()*(W-160),y:80+Math.random()*(H-160),...t,p:0});}
-function startGame(){getAC();pName=document.getElementById('nameInput').value.trim().toUpperCase()||'VIPER_01';pKills=0;pXP=0;pLv=1;pMaxLen=1;pScore=0;sTime=0;sNoHit=0;sPU=0;sAbUsed=new Set();wormholeUses=0;abCD={dash:0,ghost:0,trap:0,venom:0};ghostOn=false;dashOn=false;venomOn=false;puState={magnet:0,shield:0,speed:0,x2:0,ghost:0,mutate:0};mines=[];parts=[];pups=[];venomPuddles=[];combo=0;comboT=0;lastKillT=0;modeTimer=180000;kothSc=0;royalR=Math.max(W,H);infectionPct=0;infectedSnake=null;infectionTimer=60000;evolutionTrait=null;gameOver=false;spectating=false;specTarget=null;
+function startGame(){getAC();pName=document.getElementById('nameInput').value.trim().toUpperCase()||'VIPER_01';localStorage.setItem('vr_pname',pName);pKills=0;pXP=0;pLv=1;pMaxLen=1;pScore=0;sTime=0;sNoHit=0;sPU=0;sAbUsed=new Set();wormholeUses=0;abCD={dash:0,ghost:0,trap:0,venom:0};ghostOn=false;dashOn=false;venomOn=false;puState={magnet:0,shield:0,speed:0,x2:0,ghost:0,mutate:0};mines=[];parts=[];pups=[];venomPuddles=[];combo=0;comboT=0;lastKillT=0;modeTimer=180000;kothSc=0;royalR=Math.max(W,H);infectionPct=0;infectedSnake=null;infectionTimer=60000;evolutionTrait=null;gameOver=false;spectating=false;specTarget=null;
 const modeMap={survival:{l:'SURVIVAL',c:'hm-sur'},deathmatch:{l:'DEATHMATCH',c:'hm-dm'},koth:{l:'KING ZONE',c:'hm-koth'},royale:{l:'BATTLE ROYALE',c:'hm-roy'},infection:{l:'INFECTION',c:'hm-inf'},teams:{l:'2v2 TEAMS',c:'hm-sur'}};const mm=modeMap[MODE]||modeMap.survival;const mb=document.getElementById('modeBadge');mb.textContent=mm.l;mb.className='hud-mode '+mm.c;document.getElementById('hudKills').textContent='0';document.getElementById('hudTimer').textContent='';document.getElementById('kothBar').style.display=MODE==='koth'?'block':'none';document.getElementById('infectionMeter').style.display=MODE==='infection'?'block':'none';document.getElementById('deathScreen').style.display='none';document.getElementById('specBar').style.display='none';document.getElementById('lvlToast').style.display='none';document.getElementById('achToast').style.display='none';document.getElementById('kfeed').innerHTML='';document.getElementById('puHud').innerHTML='';document.getElementById('comboDisp').textContent='';
 document.getElementById('titleScreen').style.display='none';document.getElementById('gameScreen').classList.add('active');
 resizeCanvas();initFood();initSnakes();initWormholes();for(let i=0;i<5;i++)spawnPU();
@@ -493,6 +547,33 @@ function renderSkins(){const g=document.getElementById('skinGrid');g.innerHTML='
 function renderMissions(){const list=document.getElementById('missionList');list.innerHTML='';for(const ms of SV.missions){const prog=Math.min(ms.tgt,SV.mProg[ms.stat]||0),pct=(prog/ms.tgt)*100,done=prog>=ms.tgt;const d=document.createElement('div');d.className='mission-item';d.innerHTML=`<div class="mission-row"><div class="mission-name">${ms.ico} ${ms.n}</div><div class="mission-rew">${done?'✓ DONE':'🪙 +'+ms.rew}</div></div><div class="mission-bar"><div class="mission-fill" style="width:${pct}%"></div></div><div class="mission-prog">${prog} / ${ms.tgt}</div>`;list.appendChild(d);}}
 function renderStats(){const sg=document.getElementById('statGrid');const stats=[{v:SV.totalKills||0,l:'Total Kills'},{v:SV.maxLen||0,l:'Max Length'},{v:SV.totalScore||0,l:'Best Score'},{v:SV.maxLevel||0,l:'Max Level'},{v:SV.maxCombo||0,l:'Best Combo'},{v:Math.floor((SV.totalTime||0)/60),l:'Mins Played'}];sg.innerHTML=stats.map(s=>`<div class="stat-box"><div class="stat-val">${s.v}</div><div class="stat-lbl">${s.l}</div></div>`).join('');}
 function renderAchs(){const list=document.getElementById('achList');list.innerHTML='';const sm={kills:'totalKills',time:'totalTime',length:'maxLen',score:'totalScore',powerups:'maxPU',level:'maxLevel',combo:'maxCombo',infwins:'infWins',wormholes:'wormholeUses'};for(const a of ACHS){const done=SV.achs[a.id];const cur=SV[sm[a.stat]]||0;const d=document.createElement('div');d.className='ach-item'+(done?' done':'');d.innerHTML=`<div class="ach-ico">${a.ico}</div><div style="flex:1"><div class="ach-name">${a.n}</div><div class="ach-desc">${a.d}</div><div class="ach-prog">${Math.min(a.tgt,cur)}/${a.tgt}${done?` — 🏆 EARNED (+${a.rew} coins)`:''}</div></div>`;list.appendChild(d);}}
+
+// ── Speed setting ────────────────────────────────────────────
+let GAME_SPEED = 'normal';
+const SPEED_TICKS = { slow:110, normal:75, fast:50, extreme:30 };
+function setSpd(el) {
+  document.querySelectorAll('.spd-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  GAME_SPEED = el.dataset.spd;
+  localStorage.setItem('vr_speed', GAME_SPEED);
+}
+// Restore saved speed
+(function(){
+  const s = localStorage.getItem('vr_speed');
+  if (s) { GAME_SPEED=s; setTimeout(()=>{
+    document.querySelectorAll('.spd-btn').forEach(b=>{b.classList.remove('on');if(b.dataset.spd===s)b.classList.add('on');});
+  },100);}
+})();
+
+// ── Tutorial ─────────────────────────────────────────────────
+function showTut() { document.getElementById('tutOverlay').classList.remove('off'); }
+function closeTut() { document.getElementById('tutOverlay').classList.add('off'); }
+// Show tutorial on first ever visit
+if (!localStorage.getItem('vr_seen')) {
+  setTimeout(showTut, 800);
+  localStorage.setItem('vr_seen','1');
+}
+
 renderUI();
 document.getElementById('nameInput').focus();
 setInterval(renderUI,60000);
