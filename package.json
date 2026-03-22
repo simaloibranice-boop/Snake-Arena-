@@ -4,17 +4,21 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev":     "vite",
-    "build":   "vite build",
-    "preview": "vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "cd server && node index.js",
+    "server:dev": "cd server && npx nodemon index.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server:dev\""
   },
   "dependencies": {
-    "react":            "^18.2.0",
-    "react-dom":        "^18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite":                 "^5.0.8"
+    "concurrently": "^9.2.1",
+    "vite": "^5.0.8"
   }
 }
