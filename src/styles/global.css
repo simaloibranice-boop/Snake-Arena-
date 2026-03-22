@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Barlow+Condensed:wght@400;600;700;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --acid:   #c8ff00;
+  --cyan:   #00e5ff;
+  --red:    #ff1744;
+  --amber:  #ffab00;
+  --purple: #d500f9;
+  --ink:    #03050a;
+  --panel:  #0a1020;
+  --line:   rgba(0,229,255,0.12);
+  --text:   #8eb8d8;
+  --bright: #ddeeff;
+  --ff: 'Barlow Condensed', sans-serif;
+  --fm: 'Share Tech Mono', monospace;
+  --fd: 'Black Ops One', sans-serif;
+}
+
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--ink);
+  font-family: var(--ff);
+  color: var(--text);
+  cursor: none;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+.grad-text {
+  background: linear-gradient(135deg, var(--acid), var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,229,255,.022) 60px, rgba(0,229,255,.022) 61px),
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,229,255,.014) 60px, rgba(0,229,255,.014) 61px);
+  animation: gridShift 30s linear infinite;
+}
+@keyframes gridShift { to { background-position: 0 60px, 60px 0; } }
+
+.bar-bg { height: 4px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.bar-xp    { background: linear-gradient(90deg, var(--amber), #ff6d00); box-shadow: 0 0 8px rgba(255,171,0,.5); }
+.bar-boost { background: linear-gradient(90deg, var(--acid), var(--cyan)); }
+.bar-koth  { background: linear-gradient(90deg, var(--amber), #ff6d00); box-shadow: 0 0 8px rgba(255,171,0,.6); }
+.btn-clip  { clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%); }
+
+@keyframes shimmer   { from { left: -100%; } to { left: 160%; } }
+@keyframes fadeUp    { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+@keyframes heroIn    { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:none; } }
+@keyframes kfIn      { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:none; } }
+@keyframes kfOut     { to   { opacity:0; transform:translateY(-4px); } }
+@keyframes toastPop  { from { opacity:0; transform:translateX(-50%) scale(.8); } to { opacity:1; transform:translateX(-50%) scale(1); } }
+@keyframes deathShake{ 0%,100%{transform:none;} 25%{transform:translateX(-8px) rotate(-1deg);} 75%{transform:translateX(8px) rotate(1deg);} }
