@@ -111,3 +111,5 @@ export function KothBar({pct}){
   if(!pct)return null
   return(<div className={s.kothB}><div className={s.kothL}>ZONE CONTROL</div><div className={s.kothT}><div className="bar-fill bar-koth" style={{width:`${pct}%`}}/></div></div>)
 }
+
+export default HUD
