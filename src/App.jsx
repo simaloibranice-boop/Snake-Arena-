@@ -11,13 +11,18 @@ export default function App() {
   const [deathStats, setDeathStats] = useState(null)
 
   const {
-    canvasRef, mmapRef, hud, startGame, stopGame, useAbility, respawn,
-    setPendingDir, setBoostHeld, setKey
+    canvasRef,
+    mmapRef,
+    hud,
+    startGame,
+    stopGame,
+    useAbility,
+    respawn,
+    setPendingDir,
+    setBoostHeld,
+    setKey
   } = useGameEngine({
-    onKill: () => {},
-    onLevelUp: () => {},
-    onDeath: (stats) => { setDeathStats(stats) },
-    onSessionEnd: () => {}
+    onDeath: (stats) => setDeathStats(stats)
   })
 
   const handlePlay = (opts) => {
@@ -31,28 +36,35 @@ export default function App() {
     respawn()
   }
 
-  const handleSpectate = () => {
-    setDeathStats(null)
-  }
-
   const handleMenu = () => {
     stopGame()
     setScreen('title')
-    setDeathStats(null)
   }
 
   return (
     <>
       {screen === 'title' && <TitleScreen onPlay={handlePlay} />}
+
       {screen === 'game' && (
         <>
-          <GameCanvas canvasRef={canvasRef} mmapRef={mmapRef} hud={hud}
-            onAbility={useAbility} setBoostHeld={setBoostHeld}
-            setPendingDir={setPendingDir} setKey={setKey} />
+          <GameCanvas
+            canvasRef={canvasRef}
+            mmapRef={mmapRef}
+            hud={hud}
+            onAbility={useAbility}
+            setBoostHeld={setBoostHeld}
+            setPendingDir={setPendingDir}
+            setKey={setKey}
+          />
+
           <HUD hud={hud} onAbility={useAbility} />
+
           {deathStats && (
-            <DeathScreen stats={deathStats} onRespawn={handleRespawn}
-              onSpectate={handleSpectate} onMenu={handleMenu} />
+            <DeathScreen
+              stats={deathStats}
+              onRespawn={handleRespawn}
+              onMenu={handleMenu}
+            />
           )}
         </>
       )}
