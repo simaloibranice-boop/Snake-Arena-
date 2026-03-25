@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { useSound } from './useSound'
 
-const W=3200,H=3200,SEG=20,TICK=72,MAX_BOTS=14
+const W=3200,H=3200,SEG=20,TICK=80,MAX_BOTS=14
 const KCX=W/2,KCY=H/2,KR=210
 const COLS=['#c8ff00','#00e5ff','#ff1744','#ffab00','#d500f9','#ff8800','#44ffcc','#ff44aa','#aaff00','#ff6644']
 const BNAMES=['VenomX','NullFang','GridBeast','HexCoil','ByteViper','CyberSurge','DataReaper','GhostLoop','LaserKing','IronCoil','ShadowBit','PulseSnek','ZeroFang','NetCrawl']
@@ -70,7 +70,12 @@ export function useGameEngine({ onKill, onLevelUp, onDeath, onSessionEnd }) {
     return s
   }
 
-  function setDir(s,dx,dy){if(dx&&s.dir.x||dy&&s.dir.y)return;s.ndir={x:dx,y:dy}}
+  function setDir(s,dx,dy){
+    // Prevent 180 turn
+    if(s.dir.x !== 0 && dx === -s.dir.x) return
+    if(s.dir.y !== 0 && dy === -s.dir.y) return
+    s.ndir={x:dx,y:dy}
+  }
 
   function getNextXP(l){
     const R=[{l:1,xp:0},{l:2,xp:120},{l:3,xp:300},{l:4,xp:560},{l:5,xp:900},
@@ -143,6 +148,8 @@ export function useGameEngine({ onKill, onLevelUp, onDeath, onSessionEnd }) {
   }
 
   function step(g){
+    if(g.ps && Math.random() < 0.02) console.log("PLAYER POSITION:", Math.round(g.ps.segs[0].x), Math.round(g.ps.segs[0].y));
+    console.log("STEP RUNNING", g.ps?.dir);
     g.sTime+=TICK/1000; g.sNoHit+=TICK/1000
     if(g.mode==='deathmatch'){g.mTimer-=TICK;if(g.mTimer<=0){endGame(g,'DM_END');return}}
     if(g.mode==='koth'&&g.ps?.alive){
@@ -185,14 +192,24 @@ export function useGameEngine({ onKill, onLevelUp, onDeath, onSessionEnd }) {
   }
 
   function moveSnake(g,s){
-    s.dir={...s.ndir}; s.wiggle+=s.wigSpd
+    if(s.isPlayer) console.log("MOVE", s.dir, "pos:", s.segs[0].x, s.segs[0].y);
+    s.dir={...s.ndir}
+    s.wiggle+=s.wigSpd
     const vMult=s.venomFX?.45:1
     const spMult=s.dash?3:(g.puState.speed>0&&s.isPlayer?2:1)
     const spd=(s.boost&&s.boostE>0?SEG*1.85:SEG)*spMult*vMult
     const h=s.segs[0]
-    s.segs.unshift({x:((h.x+s.dir.x*spd)%W+W)%W, y:((h.y+s.dir.y*spd)%H+H)%H, a:Math.atan2(s.dir.y,s.dir.x)})
-    if(s.boost&&s.boostE>0){s.boostE=Math.max(0,s.boostE-4.5);if(s.segs.length>8){const sh=s.segs.pop();g.food.push({x:sh.x,y:sh.y,r:4,val:1,c:s.color,p:0})}}
-    else{s.boostE=Math.min(100,s.boostE+1.8);s.segs.pop()}
+    s.segs.unshift({x:h.x+s.dir.x*spd, y:h.y+s.dir.y*spd, a:Math.atan2(s.dir.y,s.dir.x)})
+    if(s.boost&&s.boostE>0){
+      s.boostE=Math.max(0,s.boostE-4.5)
+      if(s.segs.length>8){
+        const sh=s.segs.pop()
+        g.food.push({x:sh.x,y:sh.y,r:4,val:1,c:s.color,p:0})
+      }
+    } else {
+      s.boostE=Math.min(100,s.boostE+1.8)
+      s.segs.pop()
+    }
   }
 
   function eatFood(g,s){

@@ -973,13 +973,6 @@ function trackAllMissions(stat, val) {
   ['daily','weekly','monthly','yearly'].forEach(p => trackMission(p, stat, val));
 }
 
-// ── PATCH existing mTrack to also update calendar missions ───
-
-function mTrack(stat, v) {
-  _origMTrack(stat, v);
-  trackAllMissions(stat, v);
-}
-
 // ── PATCH showDeath to show personal best ────────────────────
 
 
