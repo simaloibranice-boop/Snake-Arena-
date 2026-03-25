@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useGameEngine } from './hooks/useGameEngine'
 import TitleScreen from './components/TitleScreen'
 import GameCanvas from './components/GameCanvas'
-import { HUD } from './components/HUD'
+import HUD from './components/HUD'
 import DeathScreen from './components/DeathScreen'
 import './styles/global.css'
 
